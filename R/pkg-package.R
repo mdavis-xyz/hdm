@@ -32,6 +32,7 @@
 #' @importFrom parallel makeCluster
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
+#' @importFrom memuse Sys.meminfo
 #' @importFrom stats binomial
 #' @importFrom stats coef
 #' @importFrom stats confint 

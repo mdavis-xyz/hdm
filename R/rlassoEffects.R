@@ -75,6 +75,7 @@ rlassoEffects <- function(x, ...)
 #' @importFrom parallel makeCluster
 #' @importFrom parallel parLapply
 #' @importFrom parallel stopCluster
+#' @importFrom memuse Sys.meminfo
 #' @export
 #' @rdname rlassoEffects
 rlassoEffects.default <- function(x, y, index = c(1:ncol(x)), method = "partialling out", 
@@ -137,6 +138,13 @@ rlassoEffects.default <- function(x, y, index = c(1:ncol(x)), method = "partiall
                                       I3 = I3m, post = post, ...)
     return(result)
   }
+  
+  # We need to make 1 copy of the large X dataframe for each process.
+  # That may fill up memory.
+  # Use some imperfect heuristics to prevent that happening,
+  # based on current free memory usage
+  max.copies <- as.integer(memuse::Sys.meminfo()$freeram / object.size(x) * 0.8)
+  num.cores <- min(num.cores, max.copies)
   
   if (num.cores == 1) {
     # Do not create a cluster,
